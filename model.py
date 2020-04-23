@@ -1,24 +1,5 @@
 import datetime
-import json
-
-
-def load_db():
-    with open("messages_db.json") as file:
-        return json.load(file)
-
-
-def save_changes(data):
-    with open("messages_db.json", "w") as file:
-        json.dump(data, file)
-
-
-def append(value):
-    data = load_db()
-    data.append(value)
-    with open("messages_db.json", "w") as file:
-        json.dump(data, file)
-        global db
-        db = data
+import db
 
 
 def get_unread_messages_by_recipient_id(recipient_id):
@@ -28,7 +9,7 @@ def get_unread_messages_by_recipient_id(recipient_id):
 
         for m in unread_messages:
             m["read"] = True
-        save_changes(db)
+        db.save_changes(db.data)
 
         result = sort_messages_by_desc_date(unread_messages)
         result = add_index(result, existing_recipient["messages"])
@@ -68,13 +49,13 @@ def add_message(recipient_id, message):
     existing_recipient = get_recipient(recipient_id)
     if existing_recipient:
         existing_recipient["messages"].append(create_message_json(message))
-        save_changes(db)
+        db.save_changes(db.data)
     else:
-        append({"recipient_id": recipient_id, "messages": [create_message_json(message)]})
+        db.append({"recipient_id": recipient_id, "messages": [create_message_json(message)]})
 
 
 def get_recipient(recipient_id):
-    return next((x for x in db if x["recipient_id"] == recipient_id), None)
+    return next((x for x in db.data if x["recipient_id"] == recipient_id), None)
 
 
 def create_message_json(message):
@@ -90,8 +71,5 @@ def delete_messages(recipient_id, indexes_to_remove):
         for i in indexes_to_remove:
             messages.pop(i)
 
-        save_changes(db)
+        db.save_changes(db.data)
     return KeyError
-
-
-db = load_db()
