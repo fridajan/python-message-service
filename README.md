@@ -12,7 +12,7 @@ This is a simple Python/Flask REST API for a message service that supports sendi
 
 ### Send message
 
-Send message to recipient
+Send message to recipient. 
 
 URL: `/api/messages/{recipient}`
 
@@ -24,8 +24,8 @@ Form params:
     
 Curl example: 
 
-    `curl --location --request POST 'localhost:5000/api/messages/112' \
-    --form 'message=SOS'`
+    curl --location --request POST 'localhost:5000/api/messages/112' \
+    --form 'message=SOS'
 
 Success Response: `200 Created`
 
@@ -37,7 +37,7 @@ Error Response:
 
 ### Retrieve new unread messages
 
-Retrieve undread messages for recipient
+Retrieve all unread messages for recipient and mark them as read. 
 
 URL: `/api/messages/{recipient}`
 
@@ -45,7 +45,7 @@ Method: `PUT`
 
 Curl example: 
 
-    `curl --location --request PUT 'localhost:5000/api/messages/112'`
+    curl --location --request PUT 'localhost:5000/api/messages/112'
 
 Success Response: `200 OK`
 
@@ -66,7 +66,7 @@ Error Response:
 
 ### Delete messages
 
-Delete one or more message for recipient
+Delete one or more message for recipient. Returns a list of remaining messages for recipient. 
 
 URL: `/api/messages/{recipient}`
 
@@ -78,9 +78,18 @@ Query parameters
 
 Curl example: 
 
-    `curl --location --request DELETE 'localhost:5000/api/messages/112?index=0&index=2'`
+    curl --location --request DELETE 'localhost:5000/api/messages/112?index=0&index=2'
 
 Success Response: `200 OK`
+
+    [
+        {
+            "index": 0,
+            "message": "SOS",
+            "read": true,
+            "timestamp": "2020-04-23 22:09:13"
+        }
+    ]
 
 Error Response: 
 
@@ -103,7 +112,7 @@ Query parameters
 
 Curl example: 
 
-    `curl --location --request DELETE 'localhost:5000/api/messages/112?index=0&index=2'`
+    curl --location --request GET 'localhost:5000/api/messages/112?start=0&stop=1'
 
 Success Response: `200 OK`
 

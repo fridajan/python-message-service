@@ -72,4 +72,5 @@ def delete_messages(recipient_id, indexes_to_remove):
             messages.pop(i)
 
         db.save_changes(db.data)
+        return get_messages_by_index(recipient_id, None, None)
     return KeyError

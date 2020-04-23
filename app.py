@@ -23,8 +23,8 @@ def messages(recipient):
             request = flask.request
             indexes_to_remove = request.args.getlist("index", type=int)
 
-            model.delete_messages(recipient, indexes_to_remove)
-            return flask.Response(status=200)
+            remaining_messages = model.delete_messages(recipient, indexes_to_remove)
+            return flask.jsonify(remaining_messages)
 
         else:
             start_index = query_args.get("start")
