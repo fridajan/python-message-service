@@ -28,10 +28,12 @@ def get_unread_messages_by_recipient_id(recipient_id):
 
         for m in unread_messages:
             m["read"] = True
-
         save_changes(db)
 
-        return unread_messages
+        result = sort_messages_by_desc_date(unread_messages)
+        result = add_index(result, existing_recipient["messages"])
+
+        return result
     return KeyError
 
 
@@ -45,12 +47,21 @@ def get_messages_by_index(recipient_id, start_index, stop_index):
         messages = existing_recipient["messages"]
         if stop_index is not None:
             stop_index += 1
-        return sort_messages_by_desc_date(messages[start_index:stop_index])
+
+        result = sort_messages_by_desc_date(messages[start_index:stop_index])
+        result = add_index(result, existing_recipient["messages"])
+        return result
     return KeyError
 
 
 def sort_messages_by_desc_date(messages):
     return sorted(messages, key=lambda x: datetime.datetime.strptime(x["timestamp"], "%Y-%m-%d %H:%M:%S"), reverse=True)
+
+
+def add_index(subset, data):
+    for x in subset:
+        x["index"] = data.index(x)
+    return subset
 
 
 def add_message(recipient_id, message):

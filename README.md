@@ -20,7 +20,7 @@ Method: `POST`
 
 Form params: 
 
-        "message": "[text message]"
+    "message": "[text message]"
     
 Curl example: 
 
@@ -51,9 +51,10 @@ Success Response: `200 OK`
 
     [
         {
+            "index": 0,
             "message": "SOS",
             "read": true,
-            "timestamp": "2020-04-23 20:12:05"
+            "timestamp": "2020-04-23 22:09:13"
         }
     ]
 
@@ -73,9 +74,7 @@ Method: `DELETE`
 
 Query parameters
 
-    {
-        "index": "[index for message, required]"
-    }
+    "index": "[index for message, required]"
 
 Curl example: 
 
@@ -99,10 +98,8 @@ Method: `GET`
 
 Query parameters
 
-    {
         "start": "[start index for messages, optional]",
         "stop": "[stop index for messages, optional]"
-    }
 
 Curl example: 
 
@@ -112,11 +109,13 @@ Success Response: `200 OK`
 
     [
         {
+            "index": 1,
             "message": "The tiger ate my family",
             "read": false,
             "timestamp": "2020-04-23 22:23:50"
         },
         {
+            "index": 0,
             "message": "SOS",
             "read": true,
             "timestamp": "2020-04-23 22:09:13"
