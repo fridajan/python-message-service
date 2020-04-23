@@ -29,7 +29,6 @@ def get_unread_messages_by_recipient_id(recipient_id):
         for m in unread_messages:
             m["read"] = True
 
-        # db.update("recipient_id", recipient_id, existing_recipient)
         save_changes(db)
 
         return unread_messages
@@ -58,7 +57,6 @@ def add_message(recipient_id, message):
     existing_recipient = get_recipient(recipient_id)
     if existing_recipient:
         existing_recipient["messages"].append(create_message_json(message))
-        # db.update("recipient_id", recipient_id, existing_recipient)
         save_changes(db)
     else:
         append({"recipient_id": recipient_id, "messages": [create_message_json(message)]})
@@ -82,7 +80,6 @@ def delete_messages(recipient_id, indexes_to_remove):
             messages.pop(i)
 
         save_changes(db)
-        # db.update(existing_recipient)
     return KeyError
 
 

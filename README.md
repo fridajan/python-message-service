@@ -1,6 +1,6 @@
 # Simple Python message service
 
-This is very simple Python/Flask REST Api for a message service that supports sending, retrieving and deleting messages. 
+This is a simple Python/Flask REST API for a message service that supports sending, retrieving and deleting messages. 
 
 ## Setup instructions
 
@@ -8,7 +8,7 @@ This is very simple Python/Flask REST Api for a message service that supports se
 3. Run `python app.py` to start the service. 
 4. The service will now run on http://localhost:5000
 
-## How to use the API examples
+## How to use the API
 
 ### Send message
 
@@ -18,11 +18,9 @@ URL: `/api/messages/{recipient}`
 
 Method: `POST`
 
-Body params: 
+Form params: 
 
-    {
         "message": "[text message]"
-    }
     
 Curl example: 
 
