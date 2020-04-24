@@ -32,7 +32,6 @@ Success Response: `200 Created`
 Error Response: 
 
 * `400 Bad request` if missing valid text message
-* `404 Not found` if recipient does not exist
 
 
 ### Retrieve new unread messages
@@ -60,8 +59,7 @@ Success Response: `200 OK`
 
 Error Response: 
 
-* `404 Not found` if recipient is missing
-
+* `400 Bad request` if invalid recipient
 
 
 ### Delete messages
@@ -93,8 +91,8 @@ Success Response: `200 OK`
 
 Error Response: 
 
-* `400 Bad request` if index is not specified in query
-* `404 Not found` if recipient or index does not exist
+* `400 Bad request` if index is not specified in query or invalid recipient
+* `404 Not found`  if index does not exist
 
 
 ### Retrieve messages by index
@@ -133,5 +131,5 @@ Success Response: `200 OK`
 
 Error Response: 
 
-* `400 Bad request` if index is not specified in query
-* `404 Not found` if recipient or index does not exist
+* `400 Bad request` if index is not specified in query or invalid recipient
+* `404 Not found` if index does not exist
