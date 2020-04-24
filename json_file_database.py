@@ -21,6 +21,3 @@ class JsonFileDatabase:
         with open(self.db_file, "w") as file:
             json.dump(db, file)
             self.data = db
-
-    # db_file = "messages_db.json"
-    # data = load_db()
