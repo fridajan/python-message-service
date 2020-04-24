@@ -1,5 +1,6 @@
 import flask
 import model
+import database
 
 app = flask.Flask(__name__)
 
@@ -10,20 +11,23 @@ def messages(recipient):
         request = flask.request
         query_args = request.args
 
+        db = database.Database("messages_db.json")
+        message_model = model.Model(db)
+
         if request.method == "POST":
             message = request.form["message"]
-            model.add_message(recipient, message)
+            message_model.add_message(recipient, message)
             return flask.Response(status=201)
 
         elif request.method == "PUT":
-            result = model.get_unread_messages_by_recipient_id(recipient)
+            result = message_model.get_unread_messages_by_recipient_id(recipient)
             return flask.jsonify(result)
 
         elif request.method == "DELETE":
             request = flask.request
             indexes_to_remove = request.args.getlist("index", type=int)
 
-            remaining_messages = model.delete_messages(recipient, indexes_to_remove)
+            remaining_messages = message_model.delete_messages(recipient, indexes_to_remove)
             return flask.jsonify(remaining_messages)
 
         else:
@@ -35,7 +39,7 @@ def messages(recipient):
             if stop_index is not None:
                 stop_index = int(stop_index)
 
-            result = model.get_messages_by_index(recipient, start_index, stop_index)
+            result = message_model.get_messages_by_index(recipient, start_index, stop_index)
             return flask.jsonify(result)
 
     except KeyError:

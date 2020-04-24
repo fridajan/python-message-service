@@ -1,76 +1,76 @@
 import datetime
-import db
 
 
-def get_unread_messages_by_recipient_id(recipient_id):
-    existing_recipient = get_recipient(recipient_id)
-    if existing_recipient:
-        unread_messages = get_unread_messages(existing_recipient["messages"])
+class Model:
+    def __init__(self, database):
+        self.db = database
 
-        for m in unread_messages:
-            m["read"] = True
-        db.save_changes(db.data)
+    def get_unread_messages_by_recipient_id(self, recipient_id):
+        existing_recipient = self.get_recipient(recipient_id)
+        if existing_recipient:
+            unread_messages = self.get_unread_messages(existing_recipient["messages"])
 
-        result = sort_messages_by_desc_date(unread_messages)
-        result = add_index(result, existing_recipient["messages"])
+            for m in unread_messages:
+                m["read"] = True
+            self.db.save_changes(self.db.data)
 
-        return result
-    return KeyError
+            result = self.sort_messages_by_desc_date(unread_messages)
+            result = self.add_index(result, existing_recipient["messages"])
 
+            return result
+        return KeyError
 
-def get_unread_messages(messages):
-    return [message for message in messages if not message["read"]]
+    @staticmethod
+    def get_unread_messages(messages):
+        return [message for message in messages if not message["read"]]
 
+    def get_messages_by_index(self, recipient_id, start_index, stop_index):
+        existing_recipient = self.get_recipient(recipient_id)
+        if existing_recipient:
+            messages = existing_recipient["messages"]
+            if stop_index is not None:
+                stop_index += 1
 
-def get_messages_by_index(recipient_id, start_index, stop_index):
-    existing_recipient = get_recipient(recipient_id)
-    if existing_recipient:
-        messages = existing_recipient["messages"]
-        if stop_index is not None:
-            stop_index += 1
+            result = self.sort_messages_by_desc_date(messages[start_index:stop_index])
+            result = self.add_index(result, existing_recipient["messages"])
+            return result
+        return KeyError
 
-        result = sort_messages_by_desc_date(messages[start_index:stop_index])
-        result = add_index(result, existing_recipient["messages"])
-        return result
-    return KeyError
+    @staticmethod
+    def sort_messages_by_desc_date(messages):
+        return sorted(messages, key=lambda x: datetime.datetime.strptime(x["timestamp"], "%Y-%m-%d %H:%M:%S"), reverse=True)
 
+    @staticmethod
+    def add_index(subset, data):
+        for x in subset:
+            x["index"] = data.index(x)
+        return subset
 
-def sort_messages_by_desc_date(messages):
-    return sorted(messages, key=lambda x: datetime.datetime.strptime(x["timestamp"], "%Y-%m-%d %H:%M:%S"), reverse=True)
+    def add_message(self, recipient_id, message):
+        existing_recipient = self.get_recipient(recipient_id)
+        if existing_recipient:
+            existing_recipient["messages"].append(self.create_message_json(message))
+            self.db.save_changes(self.db.data)
+        else:
+            self.db.append({"recipient_id": recipient_id, "messages": [self.create_message_json(message)]})
 
+    def get_recipient(self, recipient_id):
+        return next((x for x in self.db.data if x["recipient_id"] == recipient_id), None)
 
-def add_index(subset, data):
-    for x in subset:
-        x["index"] = data.index(x)
-    return subset
+    @staticmethod
+    def create_message_json(message):
+        return {"message": message, "read": False, "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
+    def delete_messages(self, recipient_id, indexes_to_remove):
+        existing_recipient = self.get_recipient(recipient_id)
+        if existing_recipient:
+            messages = existing_recipient["messages"]
 
-def add_message(recipient_id, message):
-    existing_recipient = get_recipient(recipient_id)
-    if existing_recipient:
-        existing_recipient["messages"].append(create_message_json(message))
-        db.save_changes(db.data)
-    else:
-        db.append({"recipient_id": recipient_id, "messages": [create_message_json(message)]})
+            indexes_to_remove.sort(reverse=True)
+            for i in indexes_to_remove:
+                messages.pop(i)
 
+            self.db.save_changes(self.db.data)
+            return self.get_messages_by_index(recipient_id, None, None)
+        return KeyError
 
-def get_recipient(recipient_id):
-    return next((x for x in db.data if x["recipient_id"] == recipient_id), None)
-
-
-def create_message_json(message):
-    return {"message": message, "read": False, "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-
-
-def delete_messages(recipient_id, indexes_to_remove):
-    existing_recipient = get_recipient(recipient_id)
-    if existing_recipient:
-        messages = existing_recipient["messages"]
-
-        indexes_to_remove.sort(reverse=True)
-        for i in indexes_to_remove:
-            messages.pop(i)
-
-        db.save_changes(db.data)
-        return get_messages_by_index(recipient_id, None, None)
-    return KeyError

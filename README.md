@@ -20,7 +20,7 @@ Method: `POST`
 
 Form params: 
 
-    "message": "[text message]"
+    "message": "[text message, required]"
     
 Curl example: 
 
