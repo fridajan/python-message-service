@@ -1,11 +1,11 @@
 import unittest
 import model
-import database
+import json_file_database
 
 
 class TestSum(unittest.TestCase):
     def setUp(self):
-        self.mock_database = database.Database("test_messages_db.json")
+        self.mock_database = json_file_database.JsonFileDatabase("test_messages_db.json")
         self.mock_database.save_changes([])
         self.model = model.Model(self.mock_database)
 

@@ -1,6 +1,6 @@
 import flask
 import model
-import database
+import json_file_database
 
 app = flask.Flask(__name__)
 
@@ -11,7 +11,7 @@ def messages(recipient):
         request = flask.request
         query_args = request.args
 
-        db = database.Database("messages_db.json")
+        db = json_file_database.JsonFileDatabase("messages_db.json")
         message_model = model.Model(db)
 
         if request.method == "POST":

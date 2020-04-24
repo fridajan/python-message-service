@@ -1,7 +1,7 @@
 import json
 
 
-class Database:
+class JsonFileDatabase:
     def __init__(self, filename):
         self.db_file = filename
         self.data = self.load_db()
